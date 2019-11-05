@@ -1,0 +1,18 @@
+---
+# @see https://devcenter.heroku.com/articles/php-support#php-7-3
+php_7_3_library_heroku:
+# Require to install specification of Heroku
+  - php7.3
+  - php7.3-bz2
+  - php7.3-curl
+  - php7.3-fpm
+  - php7.3-mysql
+  - php7.3-opcache
+  - php7.3-readline
+  # @see https://stackoverflow.com/a/12153535
+  - libapache2-mod-php7.3
+  - php7.3-zip
+# For PHP Unit
+  - php7.3-xml
+# For development
+  - php-xdebug

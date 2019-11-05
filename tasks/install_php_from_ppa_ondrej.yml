@@ -1,0 +1,35 @@
+---
+# @see https://thishosting.rocks/install-php-on-ubuntu/
+- name: install software-properties-common to be abstract repositories
+  apt:
+    name: software-properties-common
+
+- name: add ppa:ondrej/php repository
+  apt_repository:
+    repo: ppa:ondrej/php
+    # @see https://stackoverflow.com/a/50573098
+    update_cache: no
+
+# @see https://github.com/ansible/ansible/issues/30754#issuecomment-509161620
+- name: run "apt-get update" as a separate step
+  command: apt update --allow-releaseinfo-change
+
+- name: install php
+  apt:
+    name: '{{ php_7_3_library_heroku }}'
+
+- name: enable service on boot (excluding case when docker container)
+  service:
+    name: "{{ 'php7.3-fpm' if ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' else 'php-fpm' }}"
+    enabled: "{{ 'no' if 'container' in group_names else 'yes' }}"
+
+- name: disable php7.3 Apache module
+  apache2_module:
+    name: php7.3
+    state: absent
+  notify: restart apache
+
+- name: enable proxy_fcgi Apache module
+  apache2_module:
+    name: proxy_fcgi
+  notify: restart apache
